@@ -1,4 +1,5 @@
 import re
+from helpers import load_txt
 
 string_to_digit_map: dict[str, str] = {
     "one": "1",
@@ -11,14 +12,6 @@ string_to_digit_map: dict[str, str] = {
     "eight": "8",
     "nine": "9",
 }
-
-
-def load_trebuchet_txt() -> list[str]:
-    with open("advent_of_code/files/trebuchet.txt", "r") as f:
-        data = f.read()
-        data_list = data.split("\n")
-
-    return data_list
 
 
 def replace_string_with_digit(string: str, mapping: dict[str]) -> str:
@@ -48,7 +41,7 @@ def concat_first_and_last_integers_in_integer_list(integer_list: list[int]) -> i
 
 
 if __name__ == "__main__":
-    trebuchet_txt = load_trebuchet_txt()
+    trebuchet_txt = load_txt("advent_of_code/files/trebuchet.txt")
     replaced_trebuchet_txt = [
         replace_string_with_digit(s, string_to_digit_map) for s in trebuchet_txt
     ]
