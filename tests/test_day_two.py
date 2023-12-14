@@ -6,6 +6,8 @@ from advent_of_code.day_two import (
     is_cube_over_limit,
     is_set_impossible,
     is_game_impossible,
+    find_maximum_cubes_in_game_by_colour,
+    calculate_power_of_game,
 )
 
 
@@ -51,3 +53,28 @@ def test_is_game_impossible():
     assert is_game_impossible("Game 100: 3 Green, 2 Red; 4 Blue", cube_limit) == False
     assert is_game_impossible("Game 100: 6 Green, 2 Red; 4 Blue", cube_limit) == True
     assert is_game_impossible("Game 100: 4 Green, 2 Red; 8 Blue", cube_limit) == True
+
+
+def test_find_maximum_cubes_by_colour():
+    assert find_maximum_cubes_in_game_by_colour(
+        "Game 100: 4 Green, 2 Red; 5 Green, 4 Blue, 3 Red"
+    ) == {"blue": 4, "green": 5, "red": 3}
+
+
+def test_calculate_power_of_game():
+    assert (
+        calculate_power_of_game("Game 100: 4 Green, 2 Red; 5 Green, 4 Blue, 3 Red")
+        == 60
+    )
+    assert (
+        calculate_power_of_game(
+            "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green"
+        )
+        == 48
+    )
+    assert (
+        calculate_power_of_game(
+            "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red"
+        )
+        == 630
+    )

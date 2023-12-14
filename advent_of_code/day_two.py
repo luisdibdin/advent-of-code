@@ -1,5 +1,6 @@
 from helpers import load_txt
 import re
+import numpy as np
 
 cube_limit = {"red": 12, "green": 13, "blue": 14}
 
@@ -13,6 +14,20 @@ def is_game_impossible(game: str, cube_limit: dict[str, int]) -> bool:
     impossible_sets = [is_set_impossible(s, cube_limit) for s in sets]
 
     return any(impossible_sets)
+
+
+def calculate_power_of_game(game: str) -> int:
+    maximum_cubes = find_maximum_cubes_in_game_by_colour(game)
+
+    return np.prod(list(maximum_cubes.values()))
+
+
+def find_maximum_cubes_in_game_by_colour(game: str) -> dict[str, int]:
+    sets = split_games_into_sets(game)
+    cubes_by_set = [split_sets_into_cubes(s) for s in sets]
+    counted_cubes_by_set = [count_cubes_in_set(c) for s in cubes_by_set for c in s]
+
+    return dict(sorted(counted_cubes_by_set))
 
 
 def split_games_into_sets(string: str) -> list[str]:
@@ -50,3 +65,7 @@ if __name__ == "__main__":
     ]
     total_ids = sum(possible_games)
     print(total_ids)
+
+    power_of_games = [calculate_power_of_game(game) for game in puzzle_txt]
+    total_power = sum(power_of_games)
+    print(total_power)
