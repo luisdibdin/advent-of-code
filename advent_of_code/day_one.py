@@ -1,9 +1,31 @@
+import re
+
+string_to_digit_map: dict[str, str] = {
+    "one": "1",
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9",
+}
+
+
 def load_trebuchet_txt() -> list[str]:
     with open("advent_of_code/files/trebuchet.txt", "r") as f:
         data = f.read()
         data_list = data.split("\n")
 
     return data_list
+
+
+def replace_string_with_digit(string: str, mapping: dict[str]) -> str:
+    pattern = re.compile("(?=({}))".format("|".join(mapping.keys())))
+    test = pattern.sub(lambda x: mapping[re.escape(x.group(1))], string)
+
+    return test
 
 
 def sum_all_strings_in_list(string_list: list[str]) -> int:
@@ -27,5 +49,8 @@ def concat_first_and_last_integers_in_integer_list(integer_list: list[int]) -> i
 
 if __name__ == "__main__":
     trebuchet_txt = load_trebuchet_txt()
-    result = sum_all_strings_in_list(trebuchet_txt)
+    replaced_trebuchet_txt = [
+        replace_string_with_digit(s, string_to_digit_map) for s in trebuchet_txt
+    ]
+    result = sum_all_strings_in_list(replaced_trebuchet_txt)
     print(result)
