@@ -11,5 +11,5 @@ jobs:
       - uses: psf/black@stable
         with:
           options: "--check --verbose"
-          src: "./advent-of-code"
+          src: "./advent_of_code"
           version: "~= 22.0"
