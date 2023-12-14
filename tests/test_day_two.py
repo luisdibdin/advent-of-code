@@ -1,3 +1,5 @@
+import pytest
+
 from advent_of_code.day_two import (
     get_game_id,
     split_games_into_sets,
@@ -35,21 +37,23 @@ def test_count_cubes_of_colour_in_set():
     assert count_cubes_in_set("3 Green") == ("green", 3)
 
 
-def test_is_cube_under_limit():
-    cube_limit = {"green": 5, "red": 6, "blue": 7}
+@pytest.fixture
+def cube_limit() -> dict[str, int]:
+    return {"green": 5, "red": 6, "blue": 7}
+
+
+def test_is_cube_under_limit(cube_limit):
     assert is_cube_over_limit(("green", 3), cube_limit) == False
     assert is_cube_over_limit(("red", 7), cube_limit) == True
     assert is_cube_over_limit(("blue", 7), cube_limit) == False
 
 
-def test_is_set_impossible():
-    cube_limit = {"green": 5, "red": 6, "blue": 7}
+def test_is_set_impossible(cube_limit):
     assert is_set_impossible("3 Green, 2 Red", cube_limit) == False
     assert is_set_impossible("6 Green, 2 Red", cube_limit) == True
 
 
-def test_is_game_impossible():
-    cube_limit = {"green": 5, "red": 6, "blue": 7}
+def test_is_game_impossible(cube_limit):
     assert is_game_impossible("Game 100: 3 Green, 2 Red; 4 Blue", cube_limit) == False
     assert is_game_impossible("Game 100: 6 Green, 2 Red; 4 Blue", cube_limit) == True
     assert is_game_impossible("Game 100: 4 Green, 2 Red; 8 Blue", cube_limit) == True
