@@ -3,18 +3,20 @@ import re
 from itertools import groupby
 
 
-def get_position_of_symbols_in_matrix(matrix: list[str]) -> list[tuple[int, int]]:
+def get_position_of_symbols_in_matrix(
+    pattern: str, matrix: list[str]
+) -> list[tuple[int, int]]:
     indices = [
         (n, m)
         for n, row in enumerate(matrix)
-        for m in get_position_of_symbols_in_row(row)
+        for m in get_position_of_symbols_in_row(pattern, row)
     ]
 
     return indices
 
 
-def get_position_of_symbols_in_row(row: str) -> list[int]:
-    symbol_positions = re.finditer(r"[^\d.]", row)
+def get_position_of_symbols_in_row(pattern: str, row: str) -> list[int]:
+    symbol_positions = re.finditer(pattern, row)
     indices = [m.start(0) for m in symbol_positions]
 
     return indices
@@ -101,7 +103,7 @@ if __name__ == "__main__":
 
     digit_indices = get_position_of_all_digits(puzzle_txt)
 
-    symbol_indices = get_position_of_symbols_in_matrix(puzzle_txt)
+    symbol_indices = get_position_of_symbols_in_matrix(r"[^\d.]", puzzle_txt)
     adjacent_indices = generate_all_adjacent_coordinates(symbol_indices, max_index)
     adjacent_digit_indices = get_adjacent_digit_coordinates(
         puzzle_txt, adjacent_indices
