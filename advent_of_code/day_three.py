@@ -124,17 +124,17 @@ if __name__ == "__main__":
     digit_indices = get_position_of_all_digits(puzzle_txt)
 
     # part 1
-    # symbol_indices = get_position_of_symbols_in_matrix(r"[^\d.]", puzzle_txt)
-    # adjacent_indices = generate_all_adjacent_coordinates(symbol_indices, max_index)
-    # adjacent_digit_indices_by_row = get_adjacent_digit_coordinates_by_row(
-    #     puzzle_txt, adjacent_indices
-    # )
-    # adjacent_digits = {
-    #     k: get_only_adjacent_digits(digit_indices, v)
-    #     for (k, v) in adjacent_digit_indices_by_row.items()
-    # }
+    symbol_indices = get_position_of_symbols_in_matrix(r"[^\d.]", puzzle_txt)
+    adjacent_indices = generate_all_adjacent_coordinates(symbol_indices, max_index)
+    adjacent_digit_indices_by_row = get_adjacent_digit_coordinates_by_row(
+        puzzle_txt, adjacent_indices
+    )
+    adjacent_digits = {
+        k: get_only_adjacent_digits(digit_indices, v)
+        for (k, v) in adjacent_digit_indices_by_row.items()
+    }
 
-    # print(adjacent_digits)
+    print(sum([item for row in adjacent_digits.values() for item in row]))
 
     # part 2
     print("Part 2")
