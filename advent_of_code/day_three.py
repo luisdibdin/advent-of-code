@@ -1,6 +1,8 @@
 from helpers import load_txt
 import re
 from itertools import groupby
+from typing import Any
+import numpy as np
 
 
 def get_position_of_symbols_in_matrix(
@@ -44,17 +46,6 @@ def get_position_of_digits(row: str) -> dict[range, int]:
     return indices
 
 
-def get_digit_coordinates_by_row(
-    indicies: list[tuple[int, int]]
-) -> dict[int, list[int]]:
-    indices_by_row = group_indices_by_row(indicies)
-    simplified_indices = {
-        k: remove_consecutive_elements(v) for (k, v) in indices_by_row.items()
-    }
-
-    return simplified_indices
-
-
 def group_indices_by_row(indices: list[tuple[int, int]]) -> dict[int, list[int]]:
     return {
         k: [*map(lambda v: v[1], values)]
@@ -72,16 +63,45 @@ def remove_consecutive_elements(integer_list: list[int]) -> list[int]:
     return new_list
 
 
-def get_adjacent_digit_coordinates(
-    matrix: list[str], indices: list[tuple[int, int]]
-) -> list[tuple[int, int]]:
-    return [(i, j) for i, j in indices if matrix[i][j].isdigit()]
+def get_adjacent_digit_coordinates_by_row(
+    matrix: list[str],
+    indices: dict[tuple[int, int] : list[tuple[int, int]]],
+    adjacent_condition=lambda x: x > 0,
+) -> dict[int, list[int]]:
+    adjacent_digit_by_symbol = {
+        k: get_digit_coordinates_by_row(
+            [(i, j) for i, j in v if matrix[i][j].isdigit()]
+        )
+        for (k, v) in indices.items()
+    }
+    conditional_digits_positions = {
+        k: v
+        for (k, v) in adjacent_digit_by_symbol.items()
+        if adjacent_condition(count_subdictionary_list(v))
+    }
+
+    return conditional_digits_positions
+
+
+def count_subdictionary_list(dictionary: dict[Any, dict[Any, list[Any]]]) -> int:
+    return sum([len(i) for i in dictionary.values()])
+
+
+def get_digit_coordinates_by_row(
+    indicies: list[tuple[int, int]]
+) -> dict[int, list[int]]:
+    indices_by_row = group_indices_by_row(indicies)
+    simplified_indices = {
+        k: remove_consecutive_elements(v) for (k, v) in indices_by_row.items()
+    }
+
+    return simplified_indices
 
 
 def generate_all_adjacent_coordinates(
     indices: list[tuple[int, int]], max_index: tuple[int, int]
-) -> list[tuple[int, int]]:
-    return [i for j in indices for i in generate_adjacent_coordinates(j, max_index)]
+) -> dict[tuple[int, int], list[tuple[int, int]]]:
+    return {i: generate_adjacent_coordinates(i, max_index) for i in indices}
 
 
 def generate_adjacent_coordinates(
@@ -103,13 +123,29 @@ if __name__ == "__main__":
 
     digit_indices = get_position_of_all_digits(puzzle_txt)
 
-    symbol_indices = get_position_of_symbols_in_matrix(r"[^\d.]", puzzle_txt)
+    # part 1
+    # symbol_indices = get_position_of_symbols_in_matrix(r"[^\d.]", puzzle_txt)
+    # adjacent_indices = generate_all_adjacent_coordinates(symbol_indices, max_index)
+    # adjacent_digit_indices_by_row = get_adjacent_digit_coordinates_by_row(
+    #     puzzle_txt, adjacent_indices
+    # )
+    # adjacent_digits = {
+    #     k: get_only_adjacent_digits(digit_indices, v)
+    #     for (k, v) in adjacent_digit_indices_by_row.items()
+    # }
+
+    # print(adjacent_digits)
+
+    # part 2
+    print("Part 2")
+    symbol_indices = get_position_of_symbols_in_matrix(r"\*", puzzle_txt)
     adjacent_indices = generate_all_adjacent_coordinates(symbol_indices, max_index)
-    adjacent_digit_indices = get_adjacent_digit_coordinates(
-        puzzle_txt, adjacent_indices
+    adjacent_digit_indices_by_row = get_adjacent_digit_coordinates_by_row(
+        puzzle_txt, adjacent_indices, lambda x: x == 2
     )
-    digit_indices_by_row = get_digit_coordinates_by_row(adjacent_digit_indices)
+    adjacent_digits = {
+        k: get_only_adjacent_digits(digit_indices, v)
+        for (k, v) in adjacent_digit_indices_by_row.items()
+    }
 
-    adjacent_digits = get_only_adjacent_digits(digit_indices, digit_indices_by_row)
-
-    print(sum(adjacent_digits))
+    print(sum([np.prod(item) for item in adjacent_digits.values()]))

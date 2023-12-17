@@ -3,12 +3,13 @@ from advent_of_code.day_three import (
     get_position_of_symbols_in_matrix,
     generate_adjacent_coordinates,
     generate_all_adjacent_coordinates,
-    get_adjacent_digit_coordinates,
+    get_adjacent_digit_coordinates_by_row,
     group_indices_by_row,
     remove_consecutive_elements,
     get_position_of_digits,
     get_position_of_all_digits,
     get_only_adjacent_digits,
+    count_subdictionary_list,
 )
 
 
@@ -55,24 +56,29 @@ def test_generate_adjacent_coordinates():
 
 
 def test_generate_all_adjacent_coordinates():
-    assert generate_all_adjacent_coordinates([(0, 0), (6, 6)], (6, 7)) == [
-        (0, 0),
-        (0, 1),
-        (1, 0),
-        (1, 1),
-        (5, 5),
-        (5, 6),
-        (5, 7),
-        (6, 5),
-        (6, 6),
-        (6, 7),
-    ]
+    assert generate_all_adjacent_coordinates([(0, 0), (6, 6)], (6, 7)) == {
+        (0, 0): [(0, 0), (0, 1), (1, 0), (1, 1)],
+        (6, 6): [(5, 5), (5, 6), (5, 7), (6, 5), (6, 6), (6, 7)],
+    }
 
 
 def test_get_digit_coordinates():
-    assert get_adjacent_digit_coordinates(
-        ["..78..", "1../.."], [(0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4)]
-    ) == [(0, 2), (0, 3)]
+    assert get_adjacent_digit_coordinates_by_row(
+        ["/.78..", "1...."], {(0, 0): [(0, 0), (0, 1), (1, 0), (1, 1)]}
+    ) == {(0, 0): {1: [0]}}
+    assert get_adjacent_digit_coordinates_by_row(
+        ["/.78..", "1....", "*72.."],
+        {
+            (0, 0): [(0, 0), (0, 1), (1, 0), (1, 1)],
+            (2, 0): [(1, 0), (1, 1), (2, 0), (2, 1)],
+        },
+        lambda x: x == 2,
+    ) == {(2, 0): {1: [0], 2: [1]}}
+
+
+def test_count_subdictionary_list():
+    assert count_subdictionary_list({0: [1], 1: [2]}) == 2
+    assert count_subdictionary_list({0: [1], 1: [2, 3]}) == 3
 
 
 def test_group_indices_by_row():
